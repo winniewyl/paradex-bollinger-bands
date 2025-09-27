@@ -47,47 +47,26 @@ def fetch_klines(private_key, market, days, resolution, use_testnet=True):
     try:
         paradex = Paradex(env=env, l1_private_key=private_key)
         
+        # Debug: check what parameters fetch_klines accepts
+        import inspect
+        sig = inspect.signature(paradex.api_client.fetch_klines)
+        print(f"fetch_klines parameters: {sig}")
+        
         end_time = int(datetime.now().timestamp() * 1000)
         start_time = int((datetime.now() - timedelta(days=days)).timestamp() * 1000)
         
-        # Use correct parameter names: symbol, resolution, start_at, end_at
+        # Try calling with positional arguments
         result = paradex.api_client.fetch_klines(
-            symbol=market,
-            resolution=str(resolution),
-            start_at=start_time,
-            end_at=end_time
+            market,  # First positional argument
+            str(resolution),
+            start_time,
+            end_time
         )
         
-        # Check what columns we actually have
-        if isinstance(result, list) and len(result) > 0:
-            df = pd.DataFrame(result)
-        elif isinstance(result, dict) and 'results' in result:
-            df = pd.DataFrame(result['results'])
-        else:
-            df = pd.DataFrame(result)
-        
-        print(f"Available columns: {df.columns.tolist()}")
-        print(f"First row sample: {df.iloc[0].tolist() if len(df) > 0 else 'No data'}")
-        
-        # If columns are numeric, it means data is array format [time, open, high, low, close, volume]
-        if df.columns.tolist() == [0, 1, 2, 3, 4, 5]:
-            df.columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
-            df['start_time'] = pd.to_datetime(df['timestamp'].astype(int), unit='ms')
-        else:
-            # Map columns - check what they're actually called
-            time_col = None
-            for col in ['start_time', 'time', 'timestamp', 't', 'start_at']:
-                if col in df.columns:
-                    time_col = col
-                    break
-            
-            if time_col:
-                df['start_time'] = pd.to_datetime(df[time_col].astype(int), unit='ms')
-        
-        # Convert OHLCV columns to float
+        df = pd.DataFrame(result['results'])
+        df['start_time'] = pd.to_datetime(df['start_time'].astype(int), unit='ms')
         for col in ['open', 'high', 'low', 'close', 'volume']:
-            if col in df.columns:
-                df[col] = df[col].astype(float)
+            df[col] = df[col].astype(float)
         
         print(f"✅ Fetched {len(df)} data points")
         return df

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.Python
+venv/
+*.egg-info/
+
+# Output files
+data/
+*.png
+*.csv
+
+# Config with keys (if needed)
+# config.py
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store

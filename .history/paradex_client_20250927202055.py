@@ -67,25 +67,19 @@ def fetch_klines(private_key, market, days, resolution, use_testnet=True):
             df = pd.DataFrame(result)
         
         print(f"Available columns: {df.columns.tolist()}")
-        print(f"First row sample: {df.iloc[0].tolist() if len(df) > 0 else 'No data'}")
         
-        # If columns are numeric, it means data is array format [time, open, high, low, close, volume]
-        if df.columns.tolist() == [0, 1, 2, 3, 4, 5]:
-            df.columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
-            df['start_time'] = pd.to_datetime(df['timestamp'].astype(int), unit='ms')
-        else:
-            # Map columns - check what they're actually called
-            time_col = None
-            for col in ['start_time', 'time', 'timestamp', 't', 'start_at']:
-                if col in df.columns:
-                    time_col = col
-                    break
-            
-            if time_col:
-                df['start_time'] = pd.to_datetime(df[time_col].astype(int), unit='ms')
+        # Map columns - check what they're actually called
+        time_col = None
+        for col in ['start_time', 'time', 'timestamp', 't', 'start_at']:
+            if col in df.columns:
+                time_col = col
+                break
         
-        # Convert OHLCV columns to float
-        for col in ['open', 'high', 'low', 'close', 'volume']:
+        if time_col:
+            df['start_time'] = pd.to_datetime(df[time_col].astype(int), unit='ms')
+        
+        # Convert OHLCV columns
+        for col in ['open', 'high', 'low', 'close', 'volume', 'o', 'h', 'l', 'c', 'v']:
             if col in df.columns:
                 df[col] = df[col].astype(float)
         

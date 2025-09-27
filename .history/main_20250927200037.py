@@ -19,8 +19,7 @@ def main():
         return
     
     print(f"\nMarket: {config.MARKET} | Days: {config.DAYS} | Resolution: {config.RESOLUTION}min")
-    env_text = 'TESTNET' if config.USE_TESTNET else 'PROD'
-    print(f"Environment: {env_text}")
+    print(f"Environment: {'TESTNET' if config.USE_TESTNET else 'PROD'}")
     
     try:
         # Fetch data
@@ -53,11 +52,7 @@ def main():
         print("\n✅ Task completed successfully!\n")
         
     except Exception as e:
-        print(f"\n❌ Error: {type(e).__name__}: {str(e)}")
-        import traceback
-        print("\nFull traceback:")
-        traceback.print_exc()
-        print()
+        print(f"\n❌ Error: {e}\n")
 
 
 if __name__ == "__main__":

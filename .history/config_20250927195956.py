@@ -1,8 +1,8 @@
 """Configuration for Paradex Bollinger Bands Calculator"""
 
 # API Configuration
-PRIVATE_KEY = "0xf667ddbdbf82682d16843b79673c61b56a0ead89614f2f6afdec4d4dbc5506a5"  # Paste your private key here after generating
-USE_TESTNET = False  # True = Safe testnet, False = Real mainnet
+PRIVATE_KEY = ""  # Paste your private key here after generating
+USE_TESTNET = True  # True = Safe testnet, False = Real mainnet
 
 # Trading Parameters
 MARKET = 'BTC-USD-PERP'

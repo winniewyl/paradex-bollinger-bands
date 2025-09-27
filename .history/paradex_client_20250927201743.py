@@ -50,44 +50,17 @@ def fetch_klines(private_key, market, days, resolution, use_testnet=True):
         end_time = int(datetime.now().timestamp() * 1000)
         start_time = int((datetime.now() - timedelta(days=days)).timestamp() * 1000)
         
-        # Use correct parameter names: symbol, resolution, start_at, end_at
         result = paradex.api_client.fetch_klines(
-            symbol=market,
+            market=market,
             resolution=str(resolution),
-            start_at=start_time,
-            end_at=end_time
+            start_unix_ms=start_time,
+            end_unix_ms=end_time
         )
         
-        # Check what columns we actually have
-        if isinstance(result, list) and len(result) > 0:
-            df = pd.DataFrame(result)
-        elif isinstance(result, dict) and 'results' in result:
-            df = pd.DataFrame(result['results'])
-        else:
-            df = pd.DataFrame(result)
-        
-        print(f"Available columns: {df.columns.tolist()}")
-        print(f"First row sample: {df.iloc[0].tolist() if len(df) > 0 else 'No data'}")
-        
-        # If columns are numeric, it means data is array format [time, open, high, low, close, volume]
-        if df.columns.tolist() == [0, 1, 2, 3, 4, 5]:
-            df.columns = ['timestamp', 'open', 'high', 'low', 'close', 'volume']
-            df['start_time'] = pd.to_datetime(df['timestamp'].astype(int), unit='ms')
-        else:
-            # Map columns - check what they're actually called
-            time_col = None
-            for col in ['start_time', 'time', 'timestamp', 't', 'start_at']:
-                if col in df.columns:
-                    time_col = col
-                    break
-            
-            if time_col:
-                df['start_time'] = pd.to_datetime(df[time_col].astype(int), unit='ms')
-        
-        # Convert OHLCV columns to float
+        df = pd.DataFrame(result['results'])
+        df['start_time'] = pd.to_datetime(df['start_time'].astype(int), unit='ms')
         for col in ['open', 'high', 'low', 'close', 'volume']:
-            if col in df.columns:
-                df[col] = df[col].astype(float)
+            df[col] = df[col].astype(float)
         
         print(f"✅ Fetched {len(df)} data points")
         return df

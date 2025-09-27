@@ -2,7 +2,6 @@
 
 import matplotlib.pyplot as plt
 from datetime import datetime
-import os
 
 
 def print_stats(stats, market, period, std_dev):
@@ -46,11 +45,7 @@ def plot_chart(df, market, period, std_dev, last_n=1000):
     ax2.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    
-    # Create data folder if it doesn't exist
-    os.makedirs('data', exist_ok=True)
-    
-    filename = f'data/paradex_bb_{market}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png'
+    filename = f'paradex_bb_{market}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png'
     plt.savefig(filename, dpi=150, bbox_inches='tight')
     print(f"\n📊 Chart saved: {filename}")
     
@@ -63,10 +58,7 @@ def plot_chart(df, market, period, std_dev, last_n=1000):
 
 def export_csv(df, market):
     """Export to CSV"""
-    # Create data folder if it doesn't exist
-    os.makedirs('data', exist_ok=True)
-    
-    filename = f'data/paradex_{market}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+    filename = f'paradex_{market}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
     df.to_csv(filename, index=False)
     print(f"💾 CSV saved: {filename}")
     return filename
